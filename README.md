@@ -1,4 +1,4 @@
-In this project, we build Linux running processes monitoring tool similar to htop. We parse the /proc files and display the formatted informations using ncurses library. I have done this project as part of Udacity C++ course.
+In this project, we build Linux running processes monitoring tool similar to htop. We parse the /proc files and display the formatted information using ncurses library. I have done this project as part of Udacity C++ course.
 
 ## ncurses
 [ncurses](https://www.gnu.org/software/ncurses/) is a library that facilitates text-based graphical output in the terminal. This project relies on ncurses for display output.
