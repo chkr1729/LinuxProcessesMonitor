@@ -20,20 +20,22 @@ string LinuxParser::OperatingSystem() {
   string key;
   string value;
   std::ifstream filestream(kOSPath);
-  if (filestream.is_open()) {
-    while (std::getline(filestream, line)) {
-      std::replace(line.begin(), line.end(), ' ', '_');
-      std::replace(line.begin(), line.end(), '=', ' ');
-      std::replace(line.begin(), line.end(), '"', ' ');
-      std::istringstream linestream(line);
-      while (linestream >> key >> value) {
-        if (key == "PRETTY_NAME") {
-          std::replace(value.begin(), value.end(), '_', ' ');
-          return value;
-        }
-      }
-    }
+  if (!filestream.is_open()) {
+   std::cerr << "Unable to open " << kOSPath << "\n";
+   return "";
   }
+ while (std::getline(filestream, line)) {
+  std::replace(line.begin(), line.end(), ' ', '_');
+  std::replace(line.begin(), line.end(), '=', ' ');
+  std::replace(line.begin(), line.end(), '"', ' ');
+  std::istringstream linestream(line);
+  while (linestream >> key >> value) {
+   if (key == "PRETTY_NAME") {
+    std::replace(value.begin(), value.end(), '_', ' ');
+    return value;
+   }
+  }
+ }
   return value;
 }
 
@@ -278,9 +280,9 @@ string LinuxParser::User(int pid) {
   while(getline(stream, line)) {
     std::istringstream iss(line);
     string username, _, uid;
-    getline(iss, username, ':');
-    getline(iss, _, ':'); // skip password
-    getline(iss, uid, ':');
+    std::getline(iss, username, ':');
+    std::getline(iss, _, ':'); // skip password
+    std::getline(iss, uid, ':');
     if (uid == userId) {
       return username;
     }
