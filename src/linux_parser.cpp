@@ -188,24 +188,27 @@ int LinuxParser::RunningProcesses() {
   int runningCount = 0;
   // Iterate over the entries in the /proc directory
   for (const auto& entry : fs::directory_iterator("/proc")) {
-    if (fs::is_directory(entry)) {
-      // Check if the directory name is a number (PID)
-      string filename = entry.path().filename().string();
-      if (std::all_of(filename.begin(), filename.end(), ::isdigit)) {
-        // Read the status file of the process
-        std::ifstream statusFile((entry.path() / "status").string());
-        string line;
-        while (std::getline(statusFile, line)) {
-          if (line.substr(0, 6) == "State:") {
-            // Check if the process is running (status = "R")
-            if (line.find("R (running)") != std::string::npos) {
-              runningCount++;
-            }
-            break;
-          }
-        }
-      }
+   if (!fs::is_directory(entry)) {
+    continue;
+   }
+   // Check if the directory name is a number (PID)
+   string filename = entry.path().filename().string();
+   if (!std::all_of(filename.begin(), filename.end(), ::isdigit)) {
+    continue;
+   }
+   // Read the status file of the process
+   std::ifstream statusFile((entry.path() / "status").string());
+   string line;
+   while (std::getline(statusFile, line)) {
+    if (line.substr(0, 6) != "State:") {
+     continue;
     }
+    // Check if the process is running (status = "R")
+    if (line.find("R (running)") != std::string::npos) {
+     runningCount++;
+    }
+    break;
+   }
   }
   return runningCount;
 }
